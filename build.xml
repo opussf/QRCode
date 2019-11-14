@@ -1,0 +1,188 @@
+<project name="QRCode" default="package">
+
+	<tstamp/>
+	<property file="build.properties"/>
+	<property environment="env"/>
+	<property name="env.BUILD_NUMBER" value=""/>
+	<property name="build.number" value=""/>
+	<property name="addon.dir" location="${ADDONLOC}/${ADDONNAME}"/>
+	<!--  Pull git repo info -->
+	<!-- Get the last tag reachable from this branch -->
+	<exec executable="git" dir="." outputproperty="git.tag" failifexecutionfails="false" errorproperty="">
+		<arg line="describe --tags --abbrev=0" />
+	</exec>
+	<!-- Get a 'revision' based on last tag, commit count, commitsha, and branch name -->
+	<exec executable="git" dir="." outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+		<arg line="describe --tags --always HEAD" />
+	</exec>
+	<condition property="repository.version" value="${git.revision}" else="unknown">
+		<and>
+			<isset property="git.revision"/>
+			<length string="${git.revision}" trim="yes" length="0" when="greater"/>
+		</and>
+	</condition>
+	<!-- find gitbranch -->
+	<!-- find gitbranch -->
+	<exec executable="git" dir="." outputproperty="git.branch.tmp" failifexecutionfails="false" errorproperty="">
+		<arg line="rev-parse --abbrev-ref HEAD"/>
+	</exec>
+	<!-- replace '/' in branch name with '_' -->
+	<loadresource property="git.branch">
+		<propertyresource name="git.branch.tmp"/>
+		<filterchain>
+			<tokenfilter>
+				<replacestring from="/" to="_"/>
+			</tokenfilter>
+		</filterchain>
+	</loadresource>
+	<!-- assign the git.branch to the branch property -->
+	<condition property="branch" value="-${git.branch}" else="">
+		<and>
+			<isset property="git.branch"/>
+			<not>
+				<or>
+					<equals arg1="${git.branch}" arg2="master"/>
+					<equals arg1="${git.branch}" arg2="HEAD"/>
+				</or>
+			</not>
+		</and>
+	</condition>
+
+	<property name="version.number" value="${repository.version}${branch}${build.number}"/>
+	<echo>Building: ${version.number}</echo>
+	<!-- end git repo info -->
+
+	<property name="project.zip" value="${ant.project.name}_${version.number}.zip"/>
+	<property name="test.dir" location="test"/>
+
+	<property name="target.dir" location="target"/>
+	<property name="working.dir" location="${target.dir}/working"/>
+	<property name="report.dir" location="${target.dir}/reports"/>
+
+	<condition property="test.check">
+		<available file="${test.dir}/QRCode_unittestsuite.php" type="file"/>
+	</condition>
+
+	<filter token="VERSION" value="${version.number}"/>
+	<filter token="INTERFACE" value="${INTERFACE}"/>
+
+	<patternset id="packageFiles">
+		<include name="src/*.php"/>
+		<include name="src/*.inc"/>
+		<include name="src/*.class"/>
+		<include name="src/*.html"/>
+		<include name="README.md"/>
+		<include name="${working.dir}/*.txt"/>
+	</patternset>
+
+	<target name="clean" description="Cleans old builds">
+		<delete dir="${target.dir}" verbose="true"/>
+	</target>
+
+	<target name="changelog" description="Creates a changelog">
+		<mkdir dir="${working.dir}"/>
+		<echo file="${working.dir}/changelog.txt">Changes since ${git.tag}..${line.separator}${line.separator}</echo>
+		<exec executable="git" dir=".">
+			<arg line="log --graph --pretty=format:'%h %ci - %d %s &lt;%an&gt;' ${git.tag}~1.."/>
+			<redirector append="true" output="${working.dir}/changelog.txt"/>
+		</exec>
+	</target>
+
+	<target name="package" depends="changelog, test" description="Create a deploy package">
+		<property name="package.dir" location="${working.dir}/${ant.project.name}"/>
+		<delete dir="${package.dir}" verbose="false"/>
+		<copy	todir="${package.dir}" filtering="true" flatten="true">
+			<fileset dir=".">
+				<patternset refid="packageFiles"/>
+			</fileset>
+		</copy>
+		<zip 	destfile="${target.dir}/${project.zip}"
+				basedir="${working.dir}"
+				includes="${ant.project.name}/**"/>
+		<checksum file="${target.dir}/${project.zip}"
+				  property="zip.md5" />
+		<echo file="${target.dir}/${project.zip}.md5">${zip.md5} ${project.zip}${line.separator}</echo>
+	</target>
+
+	<target name="test" description="run unit tests" if="test.check">
+		<mkdir  dir="${working.dir}/test" />
+		<copy   todir="${working.dir}/test" filtering="false">
+			<fileset dir="test" />
+		</copy>
+		<copy   todir="${working.dir}/test/simpletest" filtering="false">
+			<fileset dir="simpletest" />
+		</copy>
+
+		<exec executable="php" dir="${working.dir}/test" resultproperty="testResult" output="TESTunit.xml">
+			<arg value="QRCode_unittestsuite.php"/>
+		</exec>
+		<mkdir  dir="${report.dir}"/>
+		<move todir="${report.dir}">
+			<fileset dir=".">
+				<include name="TEST*.xml"/>
+			</fileset>
+		</move>
+		<!--
+		<fail message="The tests failed. Please see the output for details.">
+			<condition>
+				<not>
+					<equals arg1="${testResult}" arg2="0"/>
+				</not>
+			</condition>
+		</fail>
+		-->
+	</target>
+
+<!---->
+
+	<target name="acceptancetest" description="make sure it is deployed to the test server first">
+		<exec dir="Tests" executable="php" output="TESTaccept.xml">
+			<arg value="sigs_acceptancetestsuite.php"/>
+		</exec>
+		<move todir="testResults">
+			<fileset dir=".">
+				<include name="TEST*.xml"/>
+			</fileset>
+		</move>
+	</target>
+
+	<target name="package_old" >
+		<tar destfile="sigs.tgz" compression="gzip">
+			<tarfileset dir=".">
+				<include name="xml_cache.inc"/>
+				<include name="wow_sig.inc"/>
+				<include name="support.inc"/>
+				<include name="index.php"/>
+				<include name="image_cache.inc"/>
+				<include name="iiParse.inc"/>
+				<include name="csParse.inc"/>
+				<include name="config.php"/>
+				<include name="config.inc"/>
+				<include name="config.css"/>
+				<include name="charTable.php"/>
+				<include name="images.php"/>
+				<include name="meta.php"/>
+				<include name="rParse.inc"/>
+				<include name="gParse.inc"/>
+			</tarfileset>
+			<tarfileset dir="./extlib" prefix="extlib">
+				<include name="*"/>
+			</tarfileset>
+			<tarfileset dir="./fonts" prefix="fonts">
+				<include name="*"/>
+			</tarfileset>
+			<tarfileset dir="./bg" prefix="bg">
+				<include name="*"/>
+			</tarfileset>
+			<tarfileset dir="./sigbg" prefix="sigbg">
+				<include name="*"/>
+			</tarfileset>
+		</tar>
+	</target>
+
+	<target name="deploy">
+		<copy file="sigs.tgz" todir="${toDir}"/>
+		<untar src="${toDir}/sigs.tgz" compression="gzip" dest="${toDir}"/>
+	</target>
+
+</project>

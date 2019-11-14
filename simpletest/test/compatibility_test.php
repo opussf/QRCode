@@ -1,53 +1,59 @@
 <?php
+// $Id: compatibility_test.php 1748 2008-04-14 01:50:41Z lastcraft $
+require_once(dirname(__FILE__) . '/../autorun.php');
+require_once(dirname(__FILE__) . '/../compatibility.php');
 
-require_once __DIR__ . '/../autorun.php';
-require_once __DIR__ . '/../compatibility.php';
+class ComparisonClass { }
+class ComparisonSubclass extends ComparisonClass { }
+interface ComparisonInterface { }
+class ComparisonClassWithInterface implements ComparisonInterface { }
 
-class ComparisonClass
-{
-}
-class ComparisonSubclass extends ComparisonClass
-{
-}
-interface ComparisonInterface
-{
-}
-class ComparisonClassWithInterface implements ComparisonInterface
-{
-}
-
-class TestOfCompatibility extends UnitTestCase
-{
-    public function testIdentityOfNumericStrings()
-    {
-        $numericString1 = '123';
-        $numericString2 = '00123';
+class TestOfCompatibility extends UnitTestCase {
+    
+    function testIsA() {
+        $this->assertTrue(SimpleTestCompatibility::isA(
+                new ComparisonClass(),
+                'ComparisonClass'));
+        $this->assertFalse(SimpleTestCompatibility::isA(
+                new ComparisonClass(),
+                'ComparisonSubclass'));
+        $this->assertTrue(SimpleTestCompatibility::isA(
+                new ComparisonSubclass(),
+                'ComparisonClass'));
+    }
+    
+    function testIdentityOfNumericStrings() {
+        $numericString1 = "123";
+        $numericString2 = "00123";
         $this->assertNotIdentical($numericString1, $numericString2);
     }
-
-    public function testIdentityOfObjects()
-    {
+    
+    function testIdentityOfObjects() {
         $object1 = new ComparisonClass();
         $object2 = new ComparisonClass();
         $this->assertIdentical($object1, $object2);
     }
-
-    public function testReferences()
-    {
-        $thing           = 'Hello';
+    
+    function testReferences () {
+        $thing = "Hello";
         $thing_reference = &$thing;
-        $thing_copy      = $thing;
-        $this->assertTrue(SimpleTestCompatibility::isReference($thing, $thing));
-        //$this->assertFalse(SimpleTestCompatibility::isReference($thing, $thing_reference)); // fails
-        $this->assertFalse(SimpleTestCompatibility::isReference($thing, $thing_copy));
+        $thing_copy = $thing;
+        $this->assertTrue(SimpleTestCompatibility::isReference(
+                $thing,
+                $thing));
+        $this->assertTrue(SimpleTestCompatibility::isReference(
+                $thing,
+                $thing_reference));
+        $this->assertFalse(SimpleTestCompatibility::isReference(
+                $thing,
+                $thing_copy));
     }
-
-    public function testObjectReferences()
-    {
-        $object            = new ComparisonClass();
-        $object_reference  = &$object;
-        $object_copy       = clone $object;
-        $object_assignment = &$object;
+    
+    function testObjectReferences () {
+        $object = new ComparisonClass();
+        $object_reference = $object;
+        $object_copy = new ComparisonClass();
+        $object_assignment = $object;
         $this->assertTrue(SimpleTestCompatibility::isReference(
                 $object,
                 $object));
@@ -57,15 +63,25 @@ class TestOfCompatibility extends UnitTestCase
         $this->assertFalse(SimpleTestCompatibility::isReference(
                 $object,
                 $object_copy));
-        $this->assertTrue(SimpleTestCompatibility::isReference(
-                $object,
-                $object_assignment));
+        if (version_compare(phpversion(), '5', '>=')) {
+            $this->assertTrue(SimpleTestCompatibility::isReference(
+                    $object,
+                    $object_assignment));
+        } else {
+            $this->assertFalse(SimpleTestCompatibility::isReference(
+                    $object,
+                    $object_assignment));
+        }
     }
-
-    public function testInteraceComparison()
-    {
+    
+    function testInteraceComparison() {
         $object = new ComparisonClassWithInterface();
-        $this->assertFalse(is_a(new ComparisonClass(), 'ComparisonInterface'));
-        $this->assertTrue(is_a(new ComparisonClassWithInterface(), 'ComparisonInterface'));
+        $this->assertFalse(SimpleTestCompatibility::isA(
+                new ComparisonClass(),
+                'ComparisonInterface'));
+        $this->assertTrue(SimpleTestCompatibility::isA(
+                new ComparisonClassWithInterface(),
+                'ComparisonInterface'));
     }
 }
+?>

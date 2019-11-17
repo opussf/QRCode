@@ -108,6 +108,7 @@
 		<mkdir  dir="${working.dir}/test" />
 		<copy   todir="${working.dir}/test" filtering="false">
 			<fileset dir="test" />
+			<fileset dir="src" />
 		</copy>
 		<copy   todir="${working.dir}/test/simpletest" filtering="false">
 			<fileset dir="simpletest" />
@@ -115,6 +116,7 @@
 
 		<exec executable="php" dir="${working.dir}/test" resultproperty="testResult" output="TESTunit.xml">
 			<arg value="QRCode_unittestsuite.php"/>
+			<arg value="--junit"/>
 		</exec>
 		<mkdir  dir="${report.dir}"/>
 		<move todir="${report.dir}">

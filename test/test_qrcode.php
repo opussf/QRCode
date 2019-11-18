@@ -15,12 +15,15 @@ class Test_qrcode extends UnitTestCase {
 	}
 	function test_qrcode_mode_numeric() {
 		$this->qrcode->encode( "070993005993" );
+		$this->assertEqual( $this->qrcode->mode, 1 );
 	}
 	function test_qrcode_mode_alphanumeric() {
 		$this->qrcode->encode( "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:");
+		$this->assertEqual( $this->qrcode->mode, 2 );
 	}
 	function test_qrcode_mode_8bit() {
 		$this->qrcode->encode( "3403da8" );
+		$this->assertEqual( $this->qrcode->mode, 4 );
 	}
 
 

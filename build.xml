@@ -124,7 +124,6 @@
 				<include name="TEST*.xml"/>
 			</fileset>
 		</move>
-		<!--
 		<fail message="The tests failed. Please see the output for details.">
 			<condition>
 				<not>
@@ -132,7 +131,6 @@
 				</not>
 			</condition>
 		</fail>
-		-->
 	</target>
 
 <!---->

@@ -25,6 +25,27 @@ class Test_qrcode extends UnitTestCase {
 		$this->qrcode->encode( "3403da8" );
 		$this->assertEqual( $this->qrcode->mode, 4 );
 	}
+	function test_qrcode_bitstream_8numbers() {
+		$this->qrcode->encode( "01234567" );
+		//$this->assertEqual( $this->qrcode->bitstream, "123212312313411" );
+	}
+	function test_qrcode_bitstream_numeric() {
+		$this->qrcode->encode( "070993005993" );
+		$this->assertEqual( 2, 2 );
+	}
+	function test_qrcode_bitstream_numeric_16() {
+		$this->qrcode->encode( "0123456789012345" );
+
+	}
+	function test_qrcode_bitstream_numeric_999(){
+		$this->qrcode->encode( "9999999999" );
+	}
+	function test_qrcode_bitstream_alphanemeric() {
+		$this->qrcode->encode( "AC-42" );
+	}
+	function test_qrcode_bitstream_8bit() {
+		$this->qrcode->encode( "They're Made out of Meat.\n\n\"They're made out of meat.\"\n \"Meat?\"\n" );
+	}
 
 
 	/*

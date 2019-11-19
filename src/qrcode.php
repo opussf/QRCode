@@ -1,5 +1,9 @@
 <?php
 
+if( $_GET['encode'] ) {
+    $input = $_GET['encode'];
+}
+
 class QRCode {
 	var $input;
 	var $encodedStr = "";
@@ -11,11 +15,15 @@ class QRCode {
 	);
 	var $version = 1;	// 1 to 40
 	var $errorCorrectionVersion = "H";  // L = 7%, M = 15%, Q = 25%, H = 30%
+	var $bitstream = "";
+	var $codeWords = array();
 
-	function QRCode( ) {
+	function QRCode( $debug = false ) {
+		$this->debug = $debug;
 	}
 	function encode( $input ) {
-
+	    $this->bitstream = "";
+	    $this->codeWords = array();
 		$this->input = $input;
 		$this->determineMode();
 		$this->makeBitStream();
@@ -36,7 +44,8 @@ class QRCode {
 		print( $this->input . "\n" );
 		if( $this->mode == 1 ) $this->__useNumeric();
 		if( $this->mode == 2 ) $this->__useAlphanumeric();
-		if( $this->mode == 4 ) $this->__8bit();
+		if( $this->mode == 4 ) $this->__use8bit();
+		$this->__bitstreamToCodewords();
 	}
 	function valToPaddedBinary( $in, $size ) {
 		// take a value in, pad it to $size bits
@@ -63,8 +72,10 @@ class QRCode {
 		foreach( $vals as $val ) {
 			$out[] = $this->valToPaddedBinary( $val, $bitSize[strlen($val)] );
 		}
-
-		print( join("-", $out )."\n" );
+		if( $this->debug ) {
+			print(join("-", $out) . "\n");
+		}
+		$this->bitstream = join( "", $out );
 	}
 	function __useAlphanumeric() {
 		// encode using alphanumeric mode
@@ -93,9 +104,12 @@ class QRCode {
 			$out[] = $this->valToPaddedBinary( $sum, $bitSize[$valLen] );
 			//print( $sum."\n" );
 		}
-		print( join("-", $out )."\n" );
+		if( $this->debug ) {
+			print(join("-", $out) . "\n");
+		}
+		$this->bitstream = join( "", $out );
 	}
-	function __8bit() {
+	function __use8bit() {
 		// encode using 8bit
 		$out = array();
 
@@ -111,9 +125,19 @@ class QRCode {
 			$v = ord( $val );
 			$vbin = $this->valToPaddedBinary( $v, 8 );
 			$out[] = $vbin;
-			print( "$val -> $v -> $vbin \n" );
+			//print( "$val -> $v -> $vbin \n" );
 		}
-		print( join("-", $out )."\n" );
+		if( $this->debug ) {
+			print(join("-", $out) . "\n");
+		}
+		$this->bitstream = join( "", $out );
+	}
+	function __bitstreamToCodewords() {
+		$codewords = str_split( $this->bitstream, 8 );
+		if( $this->debug ) {
+			print_r($codewords);
+		}
+
 	}
 
 	function __toString( ) {
@@ -121,6 +145,10 @@ class QRCode {
 	}
 }
 
+$qr = new QRCode();
+$qr->encode( $input );
+
+print( $qr );
 
 
 ?>

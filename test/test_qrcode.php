@@ -4,7 +4,7 @@ require_once('qrcode.php');
 
 class Test_qrcode extends UnitTestCase {
 	function setUp() {
-		$this->qrcode = new QRCode();
+		$this->qrcode = new QRCode( false );
 	}
 	function tearDown() {
 		unset( $this->qrcode );
@@ -27,11 +27,11 @@ class Test_qrcode extends UnitTestCase {
 	}
 	function test_qrcode_bitstream_8numbers() {
 		$this->qrcode->encode( "01234567" );
-		//$this->assertEqual( $this->qrcode->bitstream, "123212312313411" );
+		$this->assertEqual( $this->qrcode->bitstream, "00010000001000000000110001010110011000011" );
 	}
 	function test_qrcode_bitstream_numeric() {
 		$this->qrcode->encode( "070993005993" );
-		$this->assertEqual( 2, 2 );
+		$this->assertEqual( $this->qrcode->bitstream, "000100000011000001000110111110000100000001011111100001" );
 	}
 	function test_qrcode_bitstream_numeric_16() {
 		$this->qrcode->encode( "0123456789012345" );

@@ -4,7 +4,7 @@
 	$test = new TestSuite('QR Code Tests');
 	$test->addFile('test_qrcode.php');
 
-	$test->run(new TextReporter( ) );
+	$test->run(new HTMLReporter( ) );
 
 ?>
 

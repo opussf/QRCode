@@ -42,6 +42,7 @@ class Test_qrcode extends UnitTestCase {
 	}
 	function test_qrcode_bitstream_alphanemeric() {
 		$this->qrcode->encode( "AC-42" );
+		$this->assertEqual( $this->qrcode->bitstream, "0010000000001010011100111011100111001000010" );
 	}
 	function test_qrcode_bitstream_8bit() {
 		$this->qrcode->encode( "They're Made out of Meat.\n\n\"They're made out of meat.\"\n \"Meat?\"\n" );

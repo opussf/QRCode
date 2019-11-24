@@ -14,9 +14,26 @@ class QRCode {
 				" ", "$", "%", "*", "+", "-", ".", "/", ":" ),
 	);
 	var $version = 1;	// 1 to 40
-	var $errorCorrectionVersion = "H";  // L = 7%, M = 15%, Q = 25%, H = 30%
 	var $bitstream = "";
 	var $codeWords = array();
+
+	var $versionMode = array();
+	var $errCorrectionVersions = array( "L", "M", "Q", "H" ); // L = 7%, M = 15%, Q = 25%, H = 30%
+	var $versionCapacity = array(
+		// Number of codewords for: L M Q H (each 8 bits) (bits can be calculated)
+		// This is from table 7 in the qr_standards doc.  (p28-p32)
+		 1 => array(  19,  16,  13,   9),
+		 2 => array(  34,  28,  22,  16),
+		 3 => array(  55,  44,  34,  26),
+		 4 => array(  80,  64,  48,  36),
+		 5 => array( 108,  86,  62,  46),
+		 6 => array( 136, 108,  76,  60),
+		 7 => array( 156, 124,  88,  66),
+		 8 => array( 194, 154, 110,  86),
+		 9 => array( 232, 182, 132, 100),
+		10 => array( 274, 216, 154, 122),
+	);
+
 
 	function QRCode( $debug = false ) {
 		$this->debug = $debug;
@@ -25,6 +42,7 @@ class QRCode {
 		//print( "input: ->$input<- ".strlen( $input )."\n" );
 	    $this->bitstream = "";
 	    $this->codeWords = array();
+	    $this->versionMode = array();
 		$this->input = $input;
 		if( strlen( $input ) > 0 ) {
 			$this->determineMode();
@@ -44,10 +62,11 @@ class QRCode {
 		return $mode;
 	}
 	function makeBitStream() {
-		print( $this->input . "\n" );
+		//print( $this->input . "\n" );
 		if( $this->mode == 1 ) $this->__useNumeric();
 		if( $this->mode == 2 ) $this->__useAlphanumeric();
 		if( $this->mode == 4 ) $this->__use8bit();
+		$this->__appendTerminator();
 		$this->__bitstreamToCodewords();
 	}
 	function valToPaddedBinary( $in, $size ) {
@@ -135,11 +154,39 @@ class QRCode {
 		}
 		$this->bitstream = join( "", $out );
 	}
+	function __appendTerminator() {
+		// 8.4.8 and 8.4.9 describe this process.
+		// It seems to say to pad out the last codeword with 0s.
+		$codewordCount = intval( strlen( $this->bitstream ) / 8 ) + 1;
+		$remainderBits = strlen( $this->bitstream ) % 8;
+		//print( $this->input."\n" );
+		//print( "len: ".strlen( $this->bitstream ). ", codewordCount: $codewordCount, remainder: $remainderBits\n" );
+		// find the versions this can fit into.  1 version for each error correction mode:
+		// versionMode = array( "L" => 1, "M" => 2, "Q" => 3, "H" => 4 )
+		$errModeCount = count( $this->errCorrectionVersions );
+
+		foreach( $this->versionCapacity as $version => $codewordCapacity ) {
+			foreach( $this->errCorrectionVersions as $i => $errMode ) {
+				//print( "version: $version, i: $i, errMode: $errMode, codeWords: ".$this->versionCapacity[$version][$i]."\n" );
+				if( ! isset( $this->versionMode[$errMode] ) ) { // consider this value
+					if( $codewordCount <= $this->versionCapacity[$version][$i] ) {
+						$this->versionMode[$errMode] = $version;
+					}
+
+				}
+			}
+			if( count( $this->versionMode ) == $errModeCount ) { break; } // shortcut this once all errormode versions are found.
+		}
+		//print_r( $this->versionMode );
+		//print( "=======\n" );
+
+	}
 	function __bitstreamToCodewords() {
 		$codewords = str_split( $this->bitstream, 8 );
 		if( $this->debug ) {
 			print_r($codewords);
 		}
+
 
 	}
 

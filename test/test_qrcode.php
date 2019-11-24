@@ -35,10 +35,11 @@ class Test_qrcode extends UnitTestCase {
 	}
 	function test_qrcode_bitstream_numeric_16() {
 		$this->qrcode->encode( "0123456789012345" );
-
+		$this->assertEqual( $this->qrcode->bitstream, "00010000010000000000110001010110011010100110111000010100111010100101" );
 	}
 	function test_qrcode_bitstream_numeric_999(){
 		$this->qrcode->encode( "9999999999" );
+		$this->assertEqual( $this->qrcode->bitstream, "000100000010101111100111111110011111111001111001" );
 	}
 	function test_qrcode_bitstream_alphanemeric() {
 		$this->qrcode->encode( "AC-42" );

@@ -22,16 +22,12 @@ class QRCode {
 	var $versionCapacity = array(
 		// Number of codewords for: L M Q H (each 8 bits) (bits can be calculated)
 		// This is from table 7 in the qr_standards doc.  (p28-p32)
-		 1 => array(  19,  16,  13,   9),
-		 2 => array(  34,  28,  22,  16),
-		 3 => array(  55,  44,  34,  26),
-		 4 => array(  80,  64,  48,  36),
-		 5 => array( 108,  86,  62,  46),
-		 6 => array( 136, 108,  76,  60),
-		 7 => array( 156, 124,  88,  66),
-		 8 => array( 194, 154, 110,  86),
-		 9 => array( 232, 182, 132, 100),
-		10 => array( 274, 216, 154, 122),
+		 1 => array(   19,   16,   13,    9),	 2 => array(   34,   28,   22,   16),	 3 => array(   55,   44,   34,   26),	 4 => array(   80,   64,   48,   36),
+		 5 => array(  108,   86,   62,   46),	 6 => array(  136,  108,   76,   60),	 7 => array(  156,  124,   88,   66),	 8 => array(  194,  154,  110,   86),
+		 9 => array(  232,  182,  132,  100),	10 => array(  274,  216,  154,  122),	11 => array(  324,  254,  180,  140),	12 => array(  370,  290,  206,  158),
+		13 => array(  428,  334,  244,  180),	14 => array(  461,  365,  261,  197),	15 => array(  523,  415,  295,  223),	16 => array(  589,  453,  325,  253),
+
+		40 => array( 2956, 2334, 1666, 1276),
 	);
 
 
@@ -73,7 +69,9 @@ class QRCode {
 		// take a value in, pad it to $size bits
 		$bin = strval( base_convert( $in, 10, 2 ) );
 		$padSize = $size - strlen( $bin );
-		$bin = str_repeat( "0", $padSize ) . $bin;
+		if( $padSize > 0 ) {
+			$bin = str_repeat( "0", $padSize ) . $bin;
+		}
 		//print( "val: $in  packed: $bin " . strlen( $bin ) ." ".gettype( $bin )."\n" );
 		return $bin;
 	}

@@ -6,8 +6,10 @@ class Test_qrcode extends UnitTestCase {
 	var $numbers8="01234567";
 	var $alphanumeric="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 
+
 	function setUp() {
 		$this->qrcode = new QRCode( false );
+		$this->meat = file_get_contents( "meat.md" );
 	}
 	function tearDown() {
 		unset( $this->qrcode );
@@ -98,6 +100,10 @@ class Test_qrcode extends UnitTestCase {
 		// cwc = 109
 		$this->qrcode->encode( "http://pictures.zz9-za.com/shows/movies/To%20Wong%20Foo%20Thanks%20for%20Everything%2C%20Julie%20Newmar.mp4" );
 		$this->assertEqual( $this->qrcode->versionMode, array( "L"=>6, "M"=>7, "Q"=>8, "H"=>10 ) );
+	}
+	function test_qrcode_determine_versions_meat() {
+		$this->qrcode->encode( $this->meat );
+		$this->assertEqual( $this->qrcode->versionMode, array( "L"=>40, "M"=>40, "Q"=>40, "H"=>40 ) );
 	}
 
 

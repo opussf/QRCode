@@ -64,10 +64,7 @@ by Terry Bisson,
 
   "I thought you just told me they used radio."
 
-"They do, but what do you think is on the radio? Meat sounds. You
- know how when you slap or flap meat it makes a noise? They talk by
-flapping their meat at each other. They can even sing by squirting air
-through their meat."
+"They do, but what do you think is on the radio? Meat sounds. You know how when you slap or flap meat it makes a noise? They talk by flapping their meat at each other. They can even sing by squirting air through their meat."
 
   "Omigod. Singing meat. This is altogether too much. So what do you advise?"
 
@@ -75,35 +72,23 @@ through their meat."
 
   "Both."
 
-"Officially, we are required to contact, welcome, and log in any
-and all sentient races or multibeings in the quadrant, without
-prejudice, fear, or favor. Unofficially, I advise that we erase the
-records and forget the whole thing."
+"Officially, we are required to contact, welcome, and log in any and all sentient races or multibeings in the quadrant, without prejudice, fear, or favor. Unofficially, I advise that we erase the records and forget the whole thing."
 
   "I was hoping you would say that."
 
 "It seems harsh, but there is a limit. Do we really want to make contact with meat?"
 
-  "I agree one hundred percent. What's there to say?"
-`Hello, meat. How's it going?' But will this work? How many planets are
-we dealing with here?"
+  "I agree one hundred percent. What's there to say?" `Hello, meat. How's it going?' But will this work? How many planets are we dealing with here?"
 
-"Just one. They can travel to other planets in special meat
-containers, but they can't live on them. And being meat, they only
-travel through C space. Which limits them to the speed of light and
-makes the possibility of their ever making contact pretty slim.
-Infinitesimal, in fact."
+"Just one. They can travel to other planets in special meat containers, but they can't live on them. And being meat, they only travel through C space. Which limits them to the speed of light and makes the possibility of their ever making contact pretty slim. Infinitesimal, in fact."
 
   "So we just pretend there's no one home in the universe."
 
 "That's it."
 
-  "Cruel. But you said it yourself, who wants to meet
-meat? And the ones who have been aboard our vessels, the ones you have
-probed? You're sure they won't remember?"
+  "Cruel. But you said it yourself, who wants to meet meat? And the ones who have been aboard our vessels, the ones you have probed? You're sure they won't remember?"
 
-"They'll be considered crackpots if they do. We went into their
-heads and smoothed out their meat so that we're just a dream to them."
+"They'll be considered crackpots if they do. We went into their heads and smoothed out their meat so that we're just a dream to them."
 
   "A dream to meat! How strangely appropriate, that we should be meat's dream."
 
@@ -111,14 +96,8 @@ heads and smoothed out their meat so that we're just a dream to them."
 
   "Good. Agreed, officially and unofficially. Case closed. Any others? Anyone interesting on that side of the galaxy?"
 
-"Yes, a rather shy but sweet hydrogen core cluster intelligence
-in a class nine star in G445 zone. Was in contact two galactic rotation
-ago, wants to be friendly again."
+"Yes, a rather shy but sweet hydrogen core cluster intelligence in a class nine star in G445 zone. Was in contact two galactic rotation ago, wants to be friendly again."
 
   "They always come around."
 
 "And why not? Imagine how unbearably, how unutterably cold the universe would be if one were all alone."
-
-
-
-</p></body></html>

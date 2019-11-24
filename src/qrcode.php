@@ -22,11 +22,14 @@ class QRCode {
 		$this->debug = $debug;
 	}
 	function encode( $input ) {
+		//print( "input: ->$input<- ".strlen( $input )."\n" );
 	    $this->bitstream = "";
 	    $this->codeWords = array();
 		$this->input = $input;
-		$this->determineMode();
-		$this->makeBitStream();
+		if( strlen( $input ) > 0 ) {
+			$this->determineMode();
+			$this->makeBitStream();
+		}
 	}
 	function determineMode() {
 		$mode = 1;

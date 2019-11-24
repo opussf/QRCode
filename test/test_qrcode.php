@@ -9,6 +9,11 @@ class Test_qrcode extends UnitTestCase {
 	function tearDown() {
 		unset( $this->qrcode );
 	}
+	function test_qrcode_encode_0len() {
+		// How to handle 0 chars
+		$this->qrcode->encode( "" );
+		$this->assertEqual( $this->qrcode->input, "" );
+	}
 	function test_qrcode_encode_8numbers() {
 		$this->qrcode->encode( "01234567" );
 		$this->assertEqual( $this->qrcode->input, "01234567" );

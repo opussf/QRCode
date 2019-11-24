@@ -103,7 +103,7 @@ class Test_qrcode extends UnitTestCase {
 	}
 	function test_qrcode_determine_versions_meat() {
 		$this->qrcode->encode( $this->meat );
-		$this->assertEqual( $this->qrcode->versionMode, array( "L"=>40, "M"=>40, "Q"=>40, "H"=>40 ) );
+		$this->assertEqual( $this->qrcode->versionMode, array( "L"=>18, "M"=>20, "Q"=>24, "H"=>28 ) );
 	}
 
 

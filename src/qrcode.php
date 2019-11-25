@@ -192,6 +192,9 @@ class QRCode {
 			}
 			if( count( $this->versionMode ) == $errModeCount ) { break; } // shortcut this once all errormode versions are found.
 		}
+		if( count( $this->versionMode ) == 0 ) {
+			throw new Exception( "No versions are available to encode to." );
+		}
 	}
 	function __appendTerminator() {
 		$remainderBits = strlen( $this->bitstream ) % 8;

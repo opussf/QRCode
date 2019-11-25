@@ -37,31 +37,32 @@ class Test_qrcode extends UnitTestCase {
 	}
 	function test_qrcode_bitstream_8numbers() {
 		$this->qrcode->encode( "01234567" );
-		$this->assertEqual( $this->qrcode->bitstream, "00010000001000000000110001010110011000011" );
+		$this->assertEqual( $this->qrcode->bitstream, "000100000010000000001100010101100110000110000000" );
 	}
 	function test_qrcode_bitstream_numeric() {
 		$this->qrcode->encode( "070993005993" );
-		$this->assertEqual( $this->qrcode->bitstream, "000100000011000001000110111110000100000001011111100001" );
+		$this->assertEqual( $this->qrcode->bitstream, "00010000001100000100011011111000010000000101111110000100" );
 	}
 	function test_qrcode_bitstream_alphanumeric() {
 		// just look at the length of this
 		$this->qrcode->encode( "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:" );
-		$this->assertEqual( strlen( $this->qrcode->bitstream ), 263 );
+		$this->assertEqual( strlen( $this->qrcode->bitstream ), 264 );
 	}
 	function test_qrcode_bitstream_numeric_16() {
 		$this->qrcode->encode( "0123456789012345" );
-		$this->assertEqual( $this->qrcode->bitstream, "00010000010000000000110001010110011010100110111000010100111010100101" );
+		$this->assertEqual( $this->qrcode->bitstream, "000100000100000000001100010101100110101001101110000101001110101001010000" );
 	}
 	function test_qrcode_bitstream_numeric_999(){
 		$this->qrcode->encode( "9999999999" );
-		$this->assertEqual( $this->qrcode->bitstream, "000100000010101111100111111110011111111001111001" );
+		$this->assertEqual( $this->qrcode->bitstream, "00010000001010111110011111111001111111100111100100000000" );
 	}
 	function test_qrcode_bitstream_alphanemeric_AC() {
 		$this->qrcode->encode( "AC-42" );
-		$this->assertEqual( $this->qrcode->bitstream, "0010000000001010011100111011100111001000010" );
+		$this->assertEqual( $this->qrcode->bitstream, "001000000000101001110011101110011100100001000000" );
 	}
 	function test_qrcode_bitstream_8bit() {
 		$this->qrcode->encode( "They're Made out of Meat.\n\n\"They're made out of meat.\"\n \"Meat?\"\n" );
+		$this->assertEqual( strlen( $this->qrcode->bitstream ), 528 );
 	}
 	function test_qrcode_determine_versions_8numbers() {
 		// determine versions for each mode
@@ -104,6 +105,10 @@ class Test_qrcode extends UnitTestCase {
 	function test_qrcode_determine_versions_meat() {
 		$this->qrcode->encode( $this->meat );
 		$this->assertEqual( $this->qrcode->versionMode, array( "L"=>18, "M"=>20, "Q"=>24, "H"=>28 ) );
+	}
+	function test_qrcode_padCodeWords_8numbers() {
+		$this->qrcode->encode( "01234567" );
+
 	}
 
 

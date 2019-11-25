@@ -66,6 +66,7 @@ class QRCode {
 		if( $this->mode == 1 ) $this->__useNumeric();
 		if( $this->mode == 2 ) $this->__useAlphanumeric();
 		if( $this->mode == 4 ) $this->__use8bit();
+		$this->__determineVersions();
 		$this->__appendTerminator();
 		$this->__bitstreamToCodewords();
 	}
@@ -156,13 +157,15 @@ class QRCode {
 		}
 		$this->bitstream = join( "", $out );
 	}
-	function __appendTerminator() {
+	function __determineVersions() {
 		// 8.4.8 and 8.4.9 describe this process.
 		// It seems to say to pad out the last codeword with 0s.
 		$codewordCount = intval( strlen( $this->bitstream ) / 8 ) + 1;
-		$remainderBits = strlen( $this->bitstream ) % 8;
+		//$remainderBits = strlen( $this->bitstream ) % 8;
 		//print( $this->input."\n" );
-		//print( "len: ".strlen( $this->bitstream ). ", codewordCount: $codewordCount, remainder: $remainderBits\n" );
+		if( $this->debug ) {
+			print( "len: ".strlen( $this->bitstream ). ", codewordCount: $codewordCount, remainder: $remainderBits\n" );
+		}
 		// find the versions this can fit into.  1 version for each error correction mode:
 		// versionMode = array( "L" => 1, "M" => 2, "Q" => 3, "H" => 4 )
 		$errModeCount = count( $this->errCorrectionVersions );
@@ -179,9 +182,14 @@ class QRCode {
 			}
 			if( count( $this->versionMode ) == $errModeCount ) { break; } // shortcut this once all errormode versions are found.
 		}
-		//print_r( $this->versionMode );
-		//print( "=======\n" );
-
+	}
+	function __appendTerminator() {
+		$remainderBits = strlen( $this->bitstream ) % 8;
+		$terminatorBits = str_repeat( "0", 8-$remainderBits );
+		if( $this->debug ) {
+			print( "bits: ".strlen( $this->bitstream ).", remainder: $remainderBits, terminatorBits: $terminatorBits" );
+		}
+		$this->bitstream .= $terminatorBits;
 	}
 	function __bitstreamToCodewords() {
 		$codewords = str_split( $this->bitstream, 8 );

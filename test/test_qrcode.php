@@ -108,11 +108,8 @@ class Test_qrcode extends UnitTestCase {
 	}
 	function test_qrcode_padCodeWords_8numbers() {
 		$this->qrcode->encode( "01234567" );
-
+		//$this->assertEqual( $this->qrcode->codewordsByVersion["M"], array( ) );
 	}
-
-
-
 
 
 	/*

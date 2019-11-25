@@ -18,7 +18,8 @@ class QRCode {
 	var $codeWords = array();
 
 	var $versionMode = array();
-	var $errCorrectionVersions = array( "L", "M", "Q", "H" ); // L = 7%, M = 15%, Q = 25%, H = 30%
+	var $errCorrectionVersions = array( "L", "M", "Q", "H" ); // L = 7%, M = 15%, Q = 25%, H = 30%   M is 'standard'
+
 	var $versionCapacity = array(
 		// Number of codewords for: L M Q H (each 8 bits) (bits can be calculated)
 		// This is from table 7 in the qr_standards doc.  (p28-p32)
@@ -33,6 +34,13 @@ class QRCode {
 		33 => array( 2071, 1631, 1171,  901),	34 => array( 2191, 1725, 1231,  961),	35 => array( 2306, 1812, 1286,  986),	36 => array( 2434, 1914, 1354, 1054),
 		37 => array( 2566, 1992, 1426, 1096),	38 => array( 2702, 2102, 1502, 1142),	39 => array( 2812, 2216, 1582, 1222), 	40 => array( 2956, 2334, 1666, 1276),
 	);
+	var $appendCodewords = array( 0 => "11101100", 1 => "00010001" );  // append alternating, in this order
+	var $codewordsByVersion = array();  // "L" => bitstream, "M" => bitstream
+
+	var $errorCorrectionBlocks = array(
+		 1 => array(  1,  1,  1,  1),	 2 => array(  1,  1,  1,  1),	 3 => array(  1,  1,  2,  2),	 4 => array(  1,  2,  2,  4),
+
+	);
 
 
 	function QRCode( $debug = false ) {
@@ -43,6 +51,7 @@ class QRCode {
 	    $this->bitstream = "";
 	    $this->codeWords = array();
 	    $this->versionMode = array();
+	    $this->codewordsByVersion = array();
 		$this->input = $input;
 		if( strlen( $input ) > 0 ) {
 			$this->determineMode();
@@ -69,6 +78,7 @@ class QRCode {
 		$this->__determineVersions();
 		$this->__appendTerminator();
 		$this->__bitstreamToCodewords();
+
 	}
 	function valToPaddedBinary( $in, $size ) {
 		// take a value in, pad it to $size bits
@@ -192,11 +202,24 @@ class QRCode {
 		$this->bitstream .= $terminatorBits;
 	}
 	function __bitstreamToCodewords() {
+		// This converts to an array of codewords, padding to the capacity of each version/mode choosen
+		$numPadWords = count( $this->appendCodewords );
 		$codewords = str_split( $this->bitstream, 8 );
-		if( $this->debug ) {
-			print_r($codewords);
+		//print_r( "num codewords: ".count( $codewords )."\n" );
+		foreach( $this->errCorrectionVersions as $i => $code ) {
+			//print( "version-code: ".$this->versionMode[$code]."-$code($i) capacity: ".$this->versionCapacity[$this->versionMode[$code]][$i]."\n" );
+			$this->codewordsByVersion[$code] = $codewords;  // copy of array
+			$numCodewordsToAppend = $this->versionCapacity[$this->versionMode[$code]][$i] - count( $codewords );
+			for( $lcv = 0; $lcv < $numCodewordsToAppend; $lcv++ ) {
+				$this->codewordsByVersion[$code][] = $this->appendCodewords[$lcv % $numPadWords];
+				// print( "$lcv: ".$this->appendCodewords[$lcv % $numPadWords] ."\n" );
+			}
 		}
-
+		if( $this->debug ) {
+			print_r( $this->codewordsByVersion );
+		}
+	}
+	function __thing() {
 
 	}
 

@@ -46,6 +46,9 @@ class Test_qrcode extends UnitTestCase {
 	function test_qrcode_bitstream_8bit() {
 		$this->qrcode->encode( "They're Made out of Meat.\n\n\"They're made out of meat.\"\n \"Meat?\"\n" );
 	}
+	function test_qrcode_bitstream_Robomatics(){
+		$this->qrcode->encode( "Robomatics" );
+	}
 
 
 	/*
